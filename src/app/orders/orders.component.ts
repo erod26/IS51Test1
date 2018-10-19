@@ -3,6 +3,14 @@ import { Router } from '@angular/router';
 import { FlexModalService } from '../shared-components/flex-modal/flex-modal.service';
 import { Http } from '@angular/http';
 
+export interface IOrder {
+  pid?: string;
+  image?: string;
+  description?: string;
+  price: number;
+  quantity: number;
+}
+
 @Component({
   selector: 'app-orders',
   templateUrl: './orders.component.html',
@@ -11,16 +19,105 @@ import { Http } from '@angular/http';
 
 export class OrdersComponent implements OnInit {
 
-  orders: Array<any> = [];
+  orders: Array<IOrder> = [];
 
   constructor(
     private router: Router,
     private flexModal: FlexModalService,
     private http: Http
   ) {
+
+  }
+  displayOrder() {
+    this.orders = [{
+      "pid": "1",
+      "image": "assets/sm_android.jpeg",
+      "description": "Android",
+      "price": 150.00,
+      "quantity": 2
+    }, {
+      "pid": "2",
+      "image": "assets/sm_iphone.jpeg",
+      "description": "IPhone",
+      "price": 200.00,
+      "quantity": 1
+    }, {
+      "pid": "3",
+      "image": "assets/sm_windows.jpeg",
+      "description": "Windows Phone",
+      "price": 110.00,
+      "quantity": 2
+    }]
+  }
+  delete(index: number) {
+    this.orders.splice(index, 1);
+  }
+  addItems(item: string) {
+    switch (item) {
+      case 'Android':
+        this.orders.unshift({
+          "pid": "1",
+          "image": "assets/sm_android.jpeg",
+          "description": "Android",
+          "price": 150.00,
+          "quantity": 1
+        });
+        break;
+      case 'IPhone':
+        this.orders.unshift({
+          "pid": "2",
+          "image": "assets/sm_iphone.jpeg",
+          "description": "IPhone",
+          "price": 200.00,
+          "quantity": 1
+
+        });
+
+        break;
+      case 'Windows Phone':
+        this.orders.unshift({
+          "pid": "3",
+          "image": "assets/sm_windows.jpeg",
+          "description": "Windows Phone",
+          "price": 110.00,
+          "quantity": 1
+        });
+
+        break;
+    }
+  }
+  clear() {
+    this.orders.map((item: IOrder, i: number) => {
+      return Object.keys(item).map((key: string) => {
+        if (key != 'image') {
+          item[key] = '';
+        }
+        return item;
+      });
+    });
+  }
+
+  validate(name: string, total: number, taxAmount: number, subTotal: number){
+    if (!total){
+    }
+  }
+  showMessage(modalID: string) {
+    this.flexModal.openDialog('error-modal');
+  }
+  calculateTotal() {
+    const total = this.orders.reduce((acc: number, item: IOrder) =>{
+      acc += item.quantity * item.price;
+      return acc;
+    }, 0);
+    const taxAmount = total * .1;
+    const subTotal = total - taxAmount;
+    console.log('total is', total);
+    
+   
   }
 
   async ngOnInit() {
+
 
   }
 
